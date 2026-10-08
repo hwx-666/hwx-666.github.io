@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>我的个人主页 · My Homepage</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Supabase 客户端（v2，UMD 全局 supabase） -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- ===== 顶部导航栏 Navbar ===== -->
+  <header class="navbar">
+    <div class="nav-inner">
+      <a class="brand" href="#top">我的主页 · My&nbsp;Home</a>
+      <div class="nav-right">
+        <nav class="nav-links">
+          <a href="#about" data-i18n="nav_about">关于我</a>
+          <a href="#study" data-i18n="nav_study">学习经历</a>
+          <a href="#projects" data-i18n="nav_projects">项目</a>
+          <a href="#papers" data-i18n="nav_papers">论文</a>
+          <a href="#awards" data-i18n="nav_awards">奖项</a>
+          <a href="#skills" data-i18n="nav_skills">特长与兴趣</a>
+          <a href="#thoughts" data-i18n="nav_signature">个性签名</a>
+        </nav>
+        <button id="langToggle" class="lang-toggle" type="button">English</button>
+        <button id="openSettings" class="settings-toggle" type="button" aria-label="Settings" title="Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== 主区域 Main ===== -->
+  <main id="top">
+
+    <!-- ===== Hero 首屏 ===== -->
+    <section class="hero">
+      <div class="hero-inner">
+        <h1 class="hero-name" data-i18n="hero_name">黄文轩</h1>
+        <p class="hero-tagline" data-i18n="hero_tagline">一个努力对学业、工作和生活都负责的人</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#about" data-i18n="hero_btn1">了解更多</a>
+          <a class="btn btn-ghost" href="#contact" data-i18n="hero_btn2">联系我</a>
+          <a class="btn btn-ghost" id="heroFeedbackLink" href="#feedback" data-i18n="hero_btn3">留言反馈</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 关于我 About ===== -->
+    <section id="about" class="section">
+      <div class="section-title">
+        <h2 data-i18n="about_title">关于我</h2>
+        <span class="section-line"></span>
+      </div>
+      <div class="card about-grid">
+        <div class="about-item">
+          <span class="about-label" data-i18n="about_1_label">姓名</span>
+          <span class="about-value" data-i18n="about_1_value">黄文轩</span>
+        </div>
+        <div class="about-item">
+          <span class="about-label" data-i18n="about_2_label">学校 / 专业</span>
+          <span class="about-value" data-i18n="about_2_value">天津大学香港理工深圳未来技术学院 · 计算机科学与技术</span>
+        </div>
+        <div class="about-item">
+          <span class="about-label" data-i18n="about_3_label">MBTI</span>
+          <span class="about-value" data-i18n="about_3_value">ENTJ-A</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 学习经历 Study ===== -->
+    <section id="study" class="section">
+      <div class="section-title">
+        <h2 data-i18n="study_title">学习经历</h2>
+        <span class="section-line"></span>
+      </div>
+      <div class="card empty-card">
+        <p data-i18n="study_empty">内容待补充 · 敬请期待</p>
+      </div>
+    </section>
+
+    <!-- ===== 项目 Projects ===== -->
+    <section id="projects" class="section">
+      <div class="section-title">
+        <h2 data-i18n="projects_title">项目</h2>
+        <span class="section-line"></span>
+      </div>
+      <div class="card empty-card">
+        <p data-i18n="projects_empty">内容待补充 · 敬请期待</p>
+      </div>
+    </section>
+
+    <!-- ===== 论文 Papers ===== -->
+    <section id="papers" class="section">
+      <div class="section-title">
+        <h2 data-i18n="papers_title">论文</h2>
+        <span class="section-line"></span>
+      </div>
+      <div class="card empty-card">
+        <p data-i18n="papers_empty">内容待补充 · 敬请期待</p>
+      </div>
+    </section>
+
+    <!-- ===== 奖项 Awards ===== -->
+    <section id="awards" class="section">
+      <div class="section-title">
+        <h2 data-i18n="awards_title">奖项</h2>
+        <span class="section-line"></span>
+      </div>
+      <div class="card empty-card">
+        <p data-i18n="awards_empty">内容待补充 · 敬请期待</p>
+      </div>
+    </section>
+
+    <!-- ===== 特长与兴趣 Skills ===== -->
+    <section id="skills" class="section">
+      <div class="section-title">
+        <h2 data-i18n="skills_title">特长与兴趣</h2>
+        <span class="section-line"></span>
+      </div>
+      <div class="card chips">
+        <button type="button" class="chip chip-portfolio" id="openGallery" data-i18n="skill_1">📷 摄影 · 作品集</button>
+        <button type="button" class="chip chip-portfolio" id="openTravel" data-i18n="skill_3">✈️ 旅游 · 世界地图</button>
+        <span class="chip" data-i18n="skill_2">💃 拉丁</span>
+        <span class="chip" data-i18n="skill_4">🚴 骑行</span>
+        <span class="chip" data-i18n="skill_5">📚 阅读 · 人文社科</span>
+      </div>
+    </section>
+
+    <!-- ===== 个性签名 Signature ===== -->
+    <section id="thoughts" class="section">
+      <div class="section-title">
+        <h2 data-i18n="sig_title">个性签名</h2>
+        <span class="section-line"></span>
+      </div>
+      <div class="card">
+        <blockquote data-i18n="sig_quote">"我所停留的地方，都埋葬着部分我。"</blockquote>
+      </div>
+    </section>
+
+    <!-- ===== 联系 Contact ===== -->
+    <section id="contact" class="section">
+      <div class="section-title">
+        <h2 data-i18n="contact_title">联系我</h2>
+        <span class="section-line"></span>
+      </div>
+      <div class="card contact-card">
+        <p><span data-i18n="contact_email_label">邮箱</span>：<a href="mailto:hwx2160606@outlook.com">hwx2160606@outlook.com</a></p>
+        <p><span data-i18n="contact_qq_label">QQ</span>：<a href="tencent://message/?uin=3942961627" target="_blank" rel="noopener">3942961627</a></p>
+      </div>
+    </section>
+
+    <!-- ===== 用户反馈 Feedback ===== -->
+    <section id="feedback" class="section">
+      <div class="section-title">
+        <h2 data-i18n="feedback_title">用户反馈</h2>
+        <span class="section-line"></span>
+      </div>
+      <div class="card feedback-card">
+        <p class="fb-guide" data-i18n="feedback_guide">💡 哪里不方便、哪里不好找、哪里看不懂？都可以写在这里，也可以说点别的想说的话。</p>
+        <form id="feedbackForm" class="feedback-form" novalidate>
+          <div class="fb-field">
+            <label for="fbIdSec" data-i18n="feedback_id">你的 ID / 怎么称呼你</label>
+            <input id="fbIdSec" name="fbId" type="text" maxlength="40" autocomplete="off"
+                   data-i18n-placeholder="feedback_id_ph" placeholder="QQ 昵称 / 微信名 / 其他，也可以匿名" />
+          </div>
+          <div class="fb-field">
+            <label for="fbRelSec" data-i18n="feedback_rel">与我的关系</label>
+            <select id="fbRelSec" name="fbRel">
+              <option value="classmate" data-i18n="feedback_rel_classmate">同学</option>
+              <option value="friend" data-i18n="feedback_rel_friend">朋友</option>
+              <option value="family" data-i18n="feedback_rel_family">家人</option>
+              <option value="netizen" data-i18n="feedback_rel_netizen">网友</option>
+              <option value="stranger" data-i18n="feedback_rel_stranger">路人 / 初次来访</option>
+              <option value="other" data-i18n="feedback_rel_other">其他</option>
+            </select>
+          </div>
+          <div class="fb-field">
+            <label for="fbMsgSec" data-i18n="feedback_msg">留言内容</label>
+            <textarea id="fbMsgSec" name="fbMsg" rows="4" maxlength="500"
+                      data-i18n-placeholder="feedback_msg_ph" placeholder="例如：某某功能找半天才看到 / 某段介绍看不懂 / 整体很喜欢，希望……"></textarea>
+          </div>
+          <div class="fb-footer">
+            <p id="fbHintSec" class="fb-hint" role="alert" aria-live="polite"></p>
+            <button type="submit" class="btn btn-primary" data-i18n="feedback_submit">提交留言</button>
+          </div>
+        </form>
+        <p id="fbCountSec" class="fb-count"></p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== 页脚 Footer ===== -->
+  <footer class="footer">
+    <p data-i18n="footer_text">© 2025 黄文轩 · 用 Vibe Coding 制作</p>
+  </footer>
+
+  <!-- ===== 聊天悬浮按钮 Chat button ===== -->
+  <button id="chatToggle" class="chat-toggle" type="button" data-i18n="chat_open">💬</button>
+
+  <!-- ===== 反馈悬浮按钮 Feedback FAB（角落清晰入口，同页弹层，不跳转） ===== -->
+  <button id="feedbackFab" class="feedback-fab" type="button" data-i18n="feedback_fab">✍️ 反馈</button>
+
+  <!-- ===== 聊天窗口 Chat panel ===== -->
+  <div id="chatPanel" class="chat-panel hidden">
+    <div class="chat-header">
+      <span data-i18n="chat_title">小助手</span>
+      <button id="chatClose" class="chat-close" type="button" data-i18n="chat_close">×</button>
+    </div>
+    <div id="chatMessages" class="chat-messages"></div>
+    <div class="chat-quick">
+      <button type="button" class="quick" data-q="who" data-i18n="q_who">你是谁？</button>
+      <button type="button" class="quick" data-q="contact" data-i18n="q_contact">怎么联系你？</button>
+      <button type="button" class="quick" data-q="study" data-i18n="q_study">你在学什么？</button>
+      <button type="button" class="quick" data-q="mbti" data-i18n="q_mbti">你的 MBTI？</button>
+      <button type="button" class="quick" data-q="character" data-i18n="q_character">你的性格？</button>
+      <button type="button" class="quick" data-q="work" data-i18n="q_work">看看你的作品？</button>
+      <button type="button" class="quick" data-q="travel" data-i18n="q_travel">看到的世界？</button>
+    </div>
+    <div class="chat-input-row">
+      <input id="chatInput" type="text" data-i18n-placeholder="chat_placeholder" placeholder="输入问题或点上面快捷问题……" />
+      <button id="chatSend" class="chat-send" type="button" data-i18n="chat_send">发送</button>
+    </div>
+  </div>
+
+  <!-- ===== 摄影作品集弹窗 Portfolio Gallery ===== -->
+  <div id="galleryModal" class="gallery-modal hidden" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="gallery-inner">
+      <div class="gallery-header">
+        <h3 data-i18n="gallery_title">📷 摄影作品集</h3>
+        <button id="galleryClose" class="gallery-close" type="button" data-i18n="gallery_close">×</button>
+      </div>
+      <p class="gallery-hint" data-i18n="gallery_hint">点击任意照片放大查看</p>
+      <div class="gallery-grid" id="galleryGrid">
+        <!-- 图片由 script.js 根据作品数据循环生成 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 灯箱 Lightbox ===== -->
+  <div id="lightbox" class="lightbox hidden" aria-hidden="true">
+    <button id="lightboxClose" class="lightbox-close" type="button">×</button>
+    <button id="lightboxPrev" class="lightbox-nav lightbox-prev" type="button" aria-label="上一张">‹</button>
+    <figure class="lightbox-figure">
+      <img id="lightboxImg" src="" alt="" />
+      <figcaption id="lightboxCaption" class="lightbox-caption"></figcaption>
+    </figure>
+    <button id="lightboxNext" class="lightbox-nav lightbox-next" type="button" aria-label="下一张">›</button>
+  </div>
+
+  <!-- ===== 世界足迹 · 3D 地球 Globe ===== -->
+  <div id="globeModal" class="globe-modal hidden" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="globe-inner">
+      <div class="globe-header">
+        <h3 data-i18n="globe_title">🌍 我的足迹 · 世界</h3>
+        <button id="globeClose" class="globe-close" type="button" data-i18n="gallery_close">×</button>
+      </div>
+      <div id="globeContainer" class="globe-container">
+        <!-- 太空背景：星云与陨石（canvas 透明，会透出这些元素） -->
+        <div class="nebula neb-1"></div>
+        <div class="nebula neb-2"></div>
+        <div class="nebula neb-3"></div>
+        <div class="nebula neb-4"></div>
+        <div class="meteor mt-1"></div>
+        <div class="meteor mt-2"></div>
+        <div class="meteor mt-3"></div>
+        <div class="meteor mt-4"></div>
+      </div>
+      <p class="globe-tip" data-i18n="globe_tip">拖动可旋转 · 点击紫色的中国查看省份足迹</p>
+    </div>
+  </div>
+
+  <!-- ===== 中国足迹 · 省份地图 China Map ===== -->
+  <div id="chinaModal" class="china-modal hidden" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="china-inner">
+      <div class="china-header">
+        <h3 data-i18n="china_title">🇨🇳 中国足迹</h3>
+        <button id="chinaClose" class="china-close" type="button" data-i18n="gallery_close">×</button>
+      </div>
+      <div id="chinaMap" class="china-map"></div>
+      <p class="china-legend" data-i18n="china_legend">◈ 青蓝棱 = 我去过的地方</p>
+    </div>
+  </div>
+
+  <!-- ===== 反馈弹层 Feedback Modal（同页底部弹出，移动端友好） ===== -->
+  <div id="feedbackModal" class="feedback-modal hidden" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="feedback-sheet">
+      <div class="fb-sheet-header">
+        <h3 data-i18n="feedback_title">💬 用户反馈</h3>
+        <button id="feedbackModalClose" class="fb-sheet-close" type="button" data-i18n="gallery_close">×</button>
+      </div>
+      <p class="fb-guide" data-i18n="feedback_guide">💡 哪里不方便、哪里不好找、哪里看不懂？都可以写在这里，也可以说点别的想说的话。</p>
+      <form id="feedbackFormModal" class="feedback-form" novalidate>
+        <div class="fb-field">
+          <label for="fbIdModal" data-i18n="feedback_id">你的 ID / 怎么称呼你</label>
+          <input id="fbIdModal" name="fbId" type="text" maxlength="40" autocomplete="off"
+                 data-i18n-placeholder="feedback_id_ph" placeholder="QQ 昵称 / 微信名 / 其他，也可以匿名" />
+        </div>
+        <div class="fb-field">
+          <label for="fbRelModal" data-i18n="feedback_rel">与我的关系</label>
+          <select id="fbRelModal" name="fbRel">
+            <option value="classmate" data-i18n="feedback_rel_classmate">同学</option>
+            <option value="friend" data-i18n="feedback_rel_friend">朋友</option>
+            <option value="family" data-i18n="feedback_rel_family">家人</option>
+            <option value="netizen" data-i18n="feedback_rel_netizen">网友</option>
+            <option value="stranger" data-i18n="feedback_rel_stranger">路人 / 初次来访</option>
+            <option value="other" data-i18n="feedback_rel_other">其他</option>
+          </select>
+        </div>
+        <div class="fb-field">
+          <label for="fbMsgModal" data-i18n="feedback_msg">留言内容</label>
+          <textarea id="fbMsgModal" name="fbMsg" rows="4" maxlength="500"
+                    data-i18n-placeholder="feedback_msg_ph" placeholder="例如：某某功能找半天才看到 / 某段介绍看不懂 / 整体很喜欢，希望……"></textarea>
+        </div>
+        <div class="fb-footer">
+          <p id="fbHintModal" class="fb-hint" role="alert" aria-live="polite"></p>
+          <button type="submit" class="btn btn-primary" data-i18n="feedback_submit">提交留言</button>
+        </div>
+      </form>
+      <p id="fbCountModal" class="fb-count"></p>
+    </div>
+  </div>
+
+  <!-- ===== 设置面板 Settings ===== -->
+  <div id="settingsModal" class="settings-modal hidden" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="settings-inner">
+      <div class="settings-header">
+        <h3 data-i18n="settings_title">⚙️ 设置</h3>
+        <button id="settingsClose" class="settings-close" type="button" data-i18n="gallery_close">×</button>
+      </div>
+      <div class="settings-body">
+        <div class="set-group">
+          <p class="set-label" data-i18n="settings_theme">主题</p>
+          <div class="set-options" id="setTheme">
+            <button type="button" class="set-opt" data-value="light" data-i18n="settings_light">浅色</button>
+            <button type="button" class="set-opt" data-value="dark" data-i18n="settings_dark">深色</button>
+          </div>
+        </div>
+        <div class="set-group">
+          <p class="set-label" data-i18n="settings_lang">语言</p>
+          <div class="set-options" id="setLang">
+            <button type="button" class="set-opt" data-value="zh" data-i18n="settings_zh">中文</button>
+            <button type="button" class="set-opt" data-value="en" data-i18n="settings_en">English</button>
+          </div>
+        </div>
+        <div class="set-group">
+          <p class="set-label" data-i18n="settings_font">字号</p>
+          <div class="set-options" id="setFont">
+            <button type="button" class="set-opt" data-value="small" data-i18n="settings_font_s">小</button>
+            <button type="button" class="set-opt" data-value="normal" data-i18n="settings_font_n">标准</button>
+            <button type="button" class="set-opt" data-value="large" data-i18n="settings_font_l">大</button>
+          </div>
+        </div>
+        <div class="set-group">
+          <p class="set-label" data-i18n="settings_motion">动画效果</p>
+          <div class="set-options" id="setMotion">
+            <button type="button" class="set-opt" data-value="on" data-i18n="settings_motion_on">开启</button>
+            <button type="button" class="set-opt" data-value="off" data-i18n="settings_motion_off">减弱</button>
+          </div>
+        </div>
+      </div>
+      <div class="settings-footer">
+        <button id="settingsReset" class="set-reset" type="button" data-i18n="settings_reset">恢复默认</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 留言后台 Admin（Cmd+Shift+W 呼出，默认隐藏，仅本人可见） ===== -->
+  <div id="fbAdminModal" class="fb-admin-modal hidden" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="fb-admin-inner">
+      <div class="fb-admin-header">
+        <h3 data-i18n="fb_admin_title">💬 留言后台</h3>
+        <button id="fbAdminClose" class="fb-admin-close" type="button" data-i18n="gallery_close">×</button>
+      </div>
+      <div class="fb-admin-body">
+        <!-- 云端口令解锁区 -->
+        <div id="fbAdminLock" class="fb-admin-lock">
+          <p class="fb-admin-lock-tip" data-i18n="fb_admin_lock_tip">🔒 请输入查看口令（仅本人知道，留言不会公开）</p>
+          <div class="fb-admin-lock-row">
+            <input id="fbAdminSecret" type="password" maxlength="40" autocomplete="off"
+                   data-i18n-placeholder="fb_admin_secret_ph" placeholder="查看口令" />
+            <button id="fbAdminUnlock" class="btn btn-primary" type="button" data-i18n="fb_admin_unlock">解锁</button>
+          </div>
+          <p id="fbAdminLockErr" class="fb-admin-lock-err" role="alert" aria-live="polite"></p>
+        </div>
+        <!-- 留言列表区 -->
+        <div id="fbAdminListWrap" class="fb-admin-list-wrap hidden">
+          <div class="fb-admin-toolbar">
+            <span id="fbAdminCount" class="fb-admin-count"></span>
+            <span id="fbAdminMode" class="fb-admin-mode"></span>
+            <button id="fbAdminRefresh" class="fb-admin-refresh" type="button" data-i18n="fb_admin_refresh">🔄 刷新</button>
+            <button id="fbAdminClear" class="fb-admin-clear hidden" type="button" data-i18n="fb_admin_clear">清空全部</button>
+          </div>
+          <div id="fbAdminList" class="fb-admin-list"></div>
+          <p id="fbAdminEmpty" class="fb-admin-empty hidden" data-i18n="fb_admin_empty">暂无留言</p>
+          <p id="fbAdminStatus" class="fb-admin-status" role="alert" aria-live="polite"></p>
+        </div>
+        <p class="fb-admin-hint" data-i18n="fb_admin_hint">Cmd + Shift + W 呼出 / Esc 关闭</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="vendor/globe.gl.min.js"></script>
+  <script src="script.js"></script>
+  <script src="globe.js"></script>
+</body>
+</html>
