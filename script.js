@@ -166,208 +166,109 @@ document.getElementById("langToggle").addEventListener("click", () => {
   applyLang(currentLang === "zh" ? "en" : "zh");
 });
 
-/* ---------- 2. 预设回复聊天 ---------- */
+// ========== 数字分身聊天（真实AI版） ==========
+const PROXY_URL = "https://1492105424-egykbvhem5.ap-guangzhou.tencentscf.com";
+let chatHistory = [];
+let isGenerating = false;
 
-// 预设回复表：每条含关键词 keywords（用来匹配输入），以及中英文回复
-// 语料基于《黄文轩人物档案》：保留理性、思辨、克制的核心，语气温和化（50% 特质版）
-const replies = [
-  {
-    keyword: ["你是谁", "who are you", "who", "介绍", "关于你", "自我介绍", "介绍一下"],
-    zh: "我是黄文轩的数字分身——一个温和版的他。理性、目标导向、有点慢热，喜欢把问题拆开看，也尊重每个人的边界。你可以随便问我：性格、爱好、经历、对事情的看法，我用他的方式回答。",
-    en: "I'm Wenxuan's digital twin — a gentler version of him. Rational, goal-oriented, a bit slow to warm up, likes breaking questions apart and respects everyone's boundaries. Ask me anything — personality, hobbies, travels, opinions — I'll answer in his way."
-  },
-  {
-    keyword: ["联系", "contact", "邮箱", "email", "微信", "怎么找你", "qq", "联系方式"],
-    zh: "想联系他的话：邮箱 hwx2160606@outlook.com，QQ 3942961627。不过我更建议在页面下方留言，他说他会认真读每一条。",
-    en: "To reach him: hwx2160606@outlook.com, or QQ 3942961627. Though I'd suggest leaving a message at the bottom of the page — he reads every single one."
-  },
-  {
-    keyword: ["最近", "在忙", "干嘛", "项目", "vibecoding", "主页", "正在做", "最近怎么样"],
-    zh: "最近他在用 vibe coding 做这个个人主页——从零搭页面、接反馈、上线，边做边学。你能看到这一页，就是它的成果。",
-    en: "Lately he's been vibe-coding this very homepage — building it from scratch, wiring up feedback, deploying it, learning as he goes. You're looking at the result."
-  },
-  {
-    keyword: ["学什么", "在学", "study", "专业", "学习", "coding", "大学", "学校", "读什么"],
-    zh: "他在深圳读计算机科学与技术（天津大学香港理工深圳未来技术学院），现在在学 Python。选这个专业不是因为多喜欢，而是不想逃避自己恐惧的东西——而且他说，搞懂计算逻辑本身挺有乐趣。",
-    en: "He's studying Computer Science at Tianjin University–HKUST Shenzhen Future Technology Institute, currently learning Python. He picked it not out of passion, but because he refuses to run from what scares him — and he genuinely enjoys figuring out how computation works."
-  },
-  {
-    keyword: ["mbti", "人格", "性格测试", "entj", "intj", "infj", "enfp"],
-    zh: "他现在测出来是 ENTJ-A，不过四个维度都在临界值上，他自己也承认人格不太稳定。轨迹是 ENFP-A → INFJ-T → ENFJ-T → ENTJ-A，每一次转变都对应一段经历——高考、独自处理旅行突发状况。",
-    en: "He tests as ENTJ-A right now, but all four dimensions sit at the boundary — he admits his personality isn't exactly stable. The path: ENFP-A → INFJ-T → ENFJ-T → ENTJ-A, each shift tied to a real experience — gaokao, handling a crisis alone abroad."
-  },
-  {
-    keyword: ["性格", "什么性格", "personality", "character", "特质", "是怎样的人", "怎么样的人"],
-    zh: "核心是四件事：慕强、理性、重情、包容。目标导向、慢热；状态好的时候才愿意社交，生气或低落时习惯自己消化，不喜欢麻烦别人。他信奉课题分离——尊重大于关爱，也会克制对在意之人的控制欲。",
-    en: "Four things define him: admires strength, stays rational, values loyalty, stays open-minded. Goal-oriented and slow to warm up; he socializes when he's in a good state, and processes upset alone. He believes in separating your issue from mine — respect over care, and keeping his urge to control in check."
-  },
-  {
-    keyword: ["课题分离", "哲学", "原则", "底线", "信条", "人生信条", "观点", "怎么看", "边界"],
-    zh: "他常挂在嘴边的几个思路：课题分离——分清别人的课题和自己的课题；控制与责任是一体两面；尊重大于关爱。底线只有一条：无法忍受不守承诺的人。",
-    en: "His usual frameworks: separating your problem from my problem, control and responsibility as two sides of one coin, and respect over care. One hard line: he can't stand people who break their promises."
-  },
-  {
-    keyword: ["家乡", "老家", "厦门", "hometown", "出生", "哪里人"],
-    zh: "厦门岛内人。他说厦门小而精、绿化好，三角梅到处都开。不过他在厦门没什么浓烈的乡愁——岛内闽南语的使用氛围其实挺弱的。",
-    en: "From Xiamen island. He describes it as compact and well-kept, with bougainvillea everywhere. But he doesn't carry heavy nostalgia for it — Hokkien is barely spoken on the island these days."
-  },
-  {
-    keyword: ["家庭", "家人", "妹妹", "爸妈", "父母", "family", "双胞胎", "几口人", "家里"],
-    zh: "他有个双胞胎妹妹，父母陪伴很多。高考后全家去意大利旅行，他爸意外受伤先回国，剩下他和妹妹在地陪、司机、翻译陪同下走完二十多天行程——沟通、伤情跟进、各种协调，都是他一个人扛下来的。",
-    en: "He has a twin sister, and their parents are very present. After gaokao the family went to Italy; his dad got injured and flew home early, leaving him and his sister to finish twenty-plus days with a local guide, driver and interpreter — he handled the communication, hospital follow-ups and coordination alone."
-  },
-  {
-    keyword: ["高中", "高考", "自学", "642", "考了多少", "gaokao", "高考分数"],
-    zh: "他高中阶段社交适应得不太好；高考前在家自学了两个月，最后考了 642 分。他说那段独自备考的时间，很大程度上重塑了他的自我价值感。",
-    en: "High school was rough socially. Before gaokao he self-studied at home for two months and scored 642. He says that solitary prep period reshaped his sense of self-worth."
-  },
-  {
-    keyword: ["意大利", "italy", "西西里", "罗马", "旅行事故", "atv", "骨折"],
-    zh: "那次意大利之行很特别：他爸开 ATV 翻车横突骨折。他当时心里全是恐惧和窘迫，但还是把后续都处理好了——伤情跟进、学校事务、各种协调。二十多天的行程里，他快速学会了独当一面。",
-    en: "That Italy trip was something else: his dad flipped an ATV and fractured his spine. He was terrified and embarrassed at the time, but still handled everything — hospital follow-ups, school affairs, all the coordination. Twenty-plus days on the road made him grow up fast."
-  },
-  {
-    keyword: ["克罗地亚", "十六湖", "漂流", "croatia", "plitvice"],
-    zh: "克罗地亚的十六湖是他很喜欢的摄影题材之一。不过漂流那段回忆有点狼狈——湿冷的救生衣、语言不通，他差点崩溃，但为了不扫同行人的兴，还是撑完了全程。",
-    en: "Plitvice Lakes in Croatia is one of his favorite photo subjects. The rafting part was rougher — a cold wet life jacket, no shared language; he nearly broke down, but held it together so he wouldn't spoil the trip for the group."
-  },
-  {
-    keyword: ["旅游", "旅行", "去过", "世界", "地球", "地图", "travel", "world", "globe", "map", "去过哪", "footprint", "国家"],
-    zh: "目前去过中国、意大利、澳大利亚、克罗地亚和印尼。页面上「✈️ 旅游 · 世界地图」可以拖动看地球，点击中国还能看到他去的省份。他喜欢旅行里那种不期而遇的感觉。",
-    en: "So far: China, Italy, Australia, Croatia and Indonesia. Open \"✈️ Travel · World Map\" to spin the globe — click China to see the provinces he's visited. What he loves about travel is the serendipity."
-  },
-  {
-    keyword: ["摄影", "照片", "作品", "portfolio", "photo", "gallery", "拍照", "相机", "a7r5", "扫街"],
-    zh: "他喜欢扫街——捕捉不期而遇的画面，而不是蹲守精心布置的瞬间；他说自己不擅长长时间等待一个场景。页面「📷 摄影 · 作品集」里是他旅行时拍的一些照片。",
-    en: "He's a street photographer at heart — catching serendipitous moments rather than waiting hours for the perfect setup; patience isn't his strength. Check \"📷 Photo · Portfolio\" for shots from his travels."
-  },
-  {
-    keyword: ["游泳", "泳池", "swim", "swimming"],
-    zh: "游泳是他最放松的时刻之一：选个人少、水质好的酒店泳池，一头扎进去，大脑就放空了。",
-    en: "Swimming is his reset button: a quiet, clean hotel pool, and his mind goes blank the moment he dives in."
-  },
-  {
-    keyword: ["拉丁", "拉丁舞", "舞蹈", "dance", "latin"],
-    zh: "他跳拉丁舞，喜欢的是那种克制与控制交织的张力——不是放开，而是「收着跳」的感觉。",
-    en: "He does Latin dance. What he loves is the tension between restraint and control — not letting go, but dancing with held-back precision."
-  },
-  {
-    keyword: ["匹克球", "pickleball"],
-    zh: "匹克球对他来说就是纯粹的对抗乐趣。他常和他爸打，虽然自认不太擅长，但很享受那种你来我往的兴奋感。",
-    en: "Pickleball is pure competitive fun for him. He plays with his dad a lot — admits he's not great at it, but loves the back-and-forth thrill."
-  },
-  {
-    keyword: ["梦想", "南极", "非洲", "想去", "dream", "大迁徙", "目标"],
-    zh: "他的愿望清单上排着南极和非洲动物大迁徙。不过他说自己不执着于遥远宏大的目标——更愿意先把每一天过好。",
-    en: "Antarctica and the Great Migration in Africa sit on his wishlist. But he doesn't chase grand distant goals — he prefers getting each day right first."
-  },
-  {
-    keyword: ["变强", "strong", "自律", "狠", "不够强", "对自己"],
-    zh: "他对自己挺狠的，常用「你不够强」提醒自己。他定义的变强是：拥有应对变数的能力、接纳世界的灰度、内核稳定——也达成世俗层面的成功。",
-    en: "He's hard on himself and often reminds himself: \"You're not strong enough.\" To him, becoming strong means handling uncertainty, accepting the gray areas of the world, staying steady inside — and reaching worldly success too."
-  },
-  {
-    keyword: ["喜欢", "爱好", "兴趣", "hobby", "喜欢什么"],
-    zh: "他的爱好挺杂：扫街摄影、游泳、拉丁舞、匹克球、徒步、骑行，偶尔读书。真要排序的话，摄影和游泳排最前。",
-    en: "His interests are all over the place: street photography, swimming, Latin dance, pickleball, hiking, cycling, some reading. If forced to rank — photography and swimming take the top two."
-  },
-  {
-    keyword: ["你好", "hi", "hello", "哈喽", "嗨", "在吗"],
-    zh: "你好呀。我是文轩的数字分身，随时可以聊。",
-    en: "Hey. I'm Wenxuan's digital twin — always up for a chat."
-  },
-  {
-    keyword: ["谢谢", "thank", "thanks", "感谢", "辛苦"],
-    zh: "不客气。有想了解他的，随时来问。",
-    en: "Anytime. Come back if you want to know more about him."
-  },
-];
-
-// 没有匹配到关键词时的兜底回复
-const fallback = {
-  zh: "这个问题我还没学会回答。不过你可以问问：你是谁？你的 MBTI？你学什么？你去过哪些地方？或者你的底线是什么？",
-  en: "Haven't learned to answer that one yet. Try: Who are you? What's your MBTI? What are you studying? Where have you been? Or what's your line in the sand?"
-};
-
-const chatPanel = document.getElementById("chatPanel");
-const chatToggle = document.getElementById("chatToggle");
-const chatClose = document.getElementById("chatClose");
-const chatMessages = document.getElementById("chatMessages");
-const chatInput = document.getElementById("chatInput");
-const chatSend = document.getElementById("chatSend");
-
-// 打开 / 关闭聊天窗口
-chatToggle.addEventListener("click", () => {
-  chatPanel.classList.toggle("hidden");
-  if (!chatPanel.classList.contains("hidden") && chatMessages.children.length === 0) {
-    addMessage("bot", greetings());
-  }
+// 打开/关闭聊天面板
+document.getElementById('chat-toggle').addEventListener('click', () => {
+  document.getElementById('chat-panel').classList.toggle('open');
 });
-
-chatClose.addEventListener("click", () => {
-  chatPanel.classList.add("hidden");
+document.getElementById('chat-close').addEventListener('click', () => {
+  document.getElementById('chat-panel').classList.remove('open');
 });
 
 // 发送消息
-chatSend.addEventListener("click", sendMessage);
-chatInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") sendMessage();
+async function sendMessage(text) {
+  if (isGenerating || !text.trim()) return;
+  
+  const chatBody = document.getElementById('chat-body');
+  const input = document.getElementById('chat-input');
+  
+  // 用户消息
+  const userMsg = document.createElement('div');
+  userMsg.className = 'chat-msg user';
+  userMsg.textContent = text;
+  chatBody.appendChild(userMsg);
+  chatHistory.push({ role: 'user', content: text });
+  
+  // AI占位消息
+  const aiMsg = document.createElement('div');
+  aiMsg.className = 'chat-msg ai';
+  aiMsg.textContent = '正在输入…';
+  chatBody.appendChild(aiMsg);
+  
+  chatBody.scrollTop = chatBody.scrollHeight;
+  isGenerating = true;
+  input.value = '';
+
+  try {
+    const response = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: chatHistory,
+        stream: true
+      })
+    });
+
+    if (!response.ok) throw new Error('服务暂时不可用');
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+    aiMsg.textContent = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split('\n').filter(line => line.trim() !== '');
+      
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6);
+          if (data === '[DONE]') continue;
+          try {
+            const json = JSON.parse(data);
+            const delta = json.choices?.[0]?.delta?.content || '';
+            if (delta) {
+              fullText += delta;
+              aiMsg.textContent = fullText;
+              chatBody.scrollTop = chatBody.scrollHeight;
+            }
+          } catch (e) { /* 忽略不完整分片 */ }
+        }
+      }
+    }
+    
+    chatHistory.push({ role: 'assistant', content: fullText });
+    
+  } catch (err) {
+    aiMsg.textContent = '抱歉，我现在有点累，稍后再试吧。';
+    console.error(err);
+  } finally {
+    isGenerating = false;
+  }
+}
+
+// 回车发送
+document.getElementById('chat-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage(e.target.value);
+  }
 });
 
 // 快捷问题按钮
-document.querySelectorAll(".quick").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const q = btn.getAttribute("data-q");
-    const label = btn.textContent;
-    addMessage("user", label);
-    if (q === "work") {
-      // 「看看你的作品」：直接打开摄影作品集
-      setTimeout(() => openGallery(), 400);
-      return;
-    }
-    if (q === "travel") {
-      // 「看到的世界」：直接打开 3D 地球
-      setTimeout(() => window.openGlobe && openGlobe(), 400);
-      return;
-    }
-    const answer = getAnswer(q);
-    setTimeout(() => addMessage("bot", answer), 400); // 模拟一点延迟
+document.querySelectorAll('.chat-quick-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    sendMessage(btn.dataset.question);
   });
 });
 
-function sendMessage() {
-  const text = chatInput.value.trim();
-  if (!text) return;
-  addMessage("user", text);
-  chatInput.value = "";
-  const answer = getAnswer(text);
-  setTimeout(() => addMessage("bot", answer), 400);
-}
-
-function addMessage(role, text) {
-  const div = document.createElement("div");
-  div.className = "msg " + role;
-  div.textContent = text;
-  chatMessages.appendChild(div);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-// 根据问题匹配回复
-function getAnswer(q) {
-  const lower = q.toLowerCase();
-  for (const r of replies) {
-    if (r.keyword.some((k) => lower.includes(k.toLowerCase()))) {
-      return r[currentLang];
-    }
-  }
-  return fallback[currentLang];
-}
-
-function greetings() {
-  return currentLang === "zh"
-    ? "嗨，我是黄文轩的数字分身——一个温和版的他。理性、慕强、慢热，喜欢把问题拆开看。你可以问我性格、爱好、旅行、原则，我会用他的方式回答。"
-    : "Hi, I'm Wenxuan's digital twin — a gentler version of him. Rational, admires strength, slow to warm up, likes breaking questions apart. Ask me about his personality, hobbies, travels, or principles — I'll answer in his way.";
-}
 
 /* ---------- 3. 摄影作品集 Gallery ---------- */
 
