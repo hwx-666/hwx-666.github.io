@@ -657,6 +657,7 @@ blockquote {
   background: var(--bg);
   border-bottom: 1px solid var(--line);
   font-weight: 600;
+  color: var(--text);
 }
 
 .chat-close {
@@ -685,6 +686,7 @@ blockquote {
   line-height: 1.5;
   white-space: pre-wrap;
   word-break: break-word;
+  color: var(--text);
 }
 
 .msg.bot {
@@ -713,6 +715,7 @@ blockquote {
   padding: 5px 12px;
   font-size: 13px;
   cursor: pointer;
+  color: var(--text);
 }
 
 .quick:hover {
@@ -733,6 +736,12 @@ blockquote {
   padding: 9px 14px;
   font-size: 14px;
   outline: none;
+  color: var(--text);
+  background: var(--bg-soft);
+}
+
+#chatInput::placeholder {
+  color: var(--text-soft);
 }
 
 #chatInput:focus {
