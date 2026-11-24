@@ -49,7 +49,7 @@ const translations = {
   // 特长
   skills_title:    { zh: "特长与兴趣", en: "Skills & Interests" },
   skill_1:         { zh: "📷 摄影 · 作品集", en: "📷 Photo · Portfolio" },
-  skill_2:         { zh: "💃 拉丁",    en: "💃 Latin Dance" },
+  skill_2:         { zh: "🥊 泰拳",    en: "🥊 Muay Thai" },
   skill_3:         { zh: "✈️ 旅游 · 世界地图", en: "✈️ Travel · World Map" },
   skill_4:         { zh: "🚴 骑行",    en: "🚴 Cycling" },
   skill_5:         { zh: "📚 阅读 · 人文社科", en: "📚 Reading · Humanities" },
