@@ -166,106 +166,112 @@ document.getElementById("langToggle").addEventListener("click", () => {
   applyLang(currentLang === "zh" ? "en" : "zh");
 });
 
-// ========== 数字分身聊天（真实AI版） ==========
+// ========== 数字分身聊天（真实 AI 版 · 代理后端） ==========
 const PROXY_URL = "https://1492105424-egykbvhem5.ap-guangzhou.tencentscf.com";
 let chatHistory = [];
 let isGenerating = false;
 
-// 打开/关闭聊天面板
-document.getElementById('chat-toggle').addEventListener('click', () => {
-  document.getElementById('chat-panel').classList.toggle('open');
-});
-document.getElementById('chat-close').addEventListener('click', () => {
-  document.getElementById('chat-panel').classList.remove('open');
-});
+const chatPanel = document.getElementById("chatPanel");
+const chatMessages = document.getElementById("chatMessages");
+const chatInput = document.getElementById("chatInput");
+const chatToggleBtn = document.getElementById("chatToggle");
+const chatCloseBtn = document.getElementById("chatClose");
+const chatSendBtn = document.getElementById("chatSend");
 
-// 发送消息
+function openChat() {
+  if (!chatPanel) return;
+  chatPanel.classList.remove("hidden");
+  setTimeout(() => { if (chatInput) chatInput.focus(); }, 100);
+}
+function closeChat() {
+  if (!chatPanel) return;
+  chatPanel.classList.add("hidden");
+}
+
+if (chatToggleBtn) chatToggleBtn.addEventListener("click", openChat);
+if (chatCloseBtn) chatCloseBtn.addEventListener("click", closeChat);
+
+function addMessage(role, text) {
+  const msg = document.createElement("div");
+  msg.className = "msg " + (role === "user" ? "user" : "bot");
+  msg.textContent = text;
+  chatMessages.appendChild(msg);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  return msg;
+}
+
 async function sendMessage(text) {
-  if (isGenerating || !text.trim()) return;
-  
-  const chatBody = document.getElementById('chat-body');
-  const input = document.getElementById('chat-input');
-  
-  // 用户消息
-  const userMsg = document.createElement('div');
-  userMsg.className = 'chat-msg user';
-  userMsg.textContent = text;
-  chatBody.appendChild(userMsg);
-  chatHistory.push({ role: 'user', content: text });
-  
-  // AI占位消息
-  const aiMsg = document.createElement('div');
-  aiMsg.className = 'chat-msg ai';
-  aiMsg.textContent = '正在输入…';
-  chatBody.appendChild(aiMsg);
-  
-  chatBody.scrollTop = chatBody.scrollHeight;
+  text = (text || "").trim();
+  if (isGenerating || !text || !chatMessages) return;
+
+  addMessage("user", text);
+  chatHistory.push({ role: "user", content: text });
+  if (chatInput) chatInput.value = "";
+
+  const aiMsg = addMessage("bot", "正在输入…");
   isGenerating = true;
-  input.value = '';
 
   try {
     const response = await fetch(PROXY_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messages: chatHistory,
-        stream: true
-      })
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: chatHistory, stream: true })
     });
-
-    if (!response.ok) throw new Error('服务暂时不可用');
+    if (!response.ok) throw new Error("服务暂时不可用");
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
-    let fullText = '';
-    aiMsg.textContent = '';
+    let fullText = "";
+    aiMsg.textContent = "";
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      
       const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split('\n').filter(line => line.trim() !== '');
-      
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const data = line.slice(6);
-          if (data === '[DONE]') continue;
-          try {
-            const json = JSON.parse(data);
-            const delta = json.choices?.[0]?.delta?.content || '';
-            if (delta) {
-              fullText += delta;
-              aiMsg.textContent = fullText;
-              chatBody.scrollTop = chatBody.scrollHeight;
-            }
-          } catch (e) { /* 忽略不完整分片 */ }
-        }
-      }
+      chunk.split("\n").forEach((line) => {
+        if (!line.startsWith("data: ")) return;
+        const data = line.slice(6).trim();
+        if (data === "[DONE]") return;
+        try {
+          const json = JSON.parse(data);
+          const delta = json.choices && json.choices[0] && json.choices[0].delta
+            ? (json.choices[0].delta.content || "") : "";
+          if (delta) {
+            fullText += delta;
+            aiMsg.textContent = fullText;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          }
+        } catch (e) { /* 忽略不完整分片 */ }
+      });
     }
-    
-    chatHistory.push({ role: 'assistant', content: fullText });
-    
+
+    if (!fullText) aiMsg.textContent = "（没有收到回复，请稍后再试）";
+    chatHistory.push({ role: "assistant", content: fullText });
   } catch (err) {
-    aiMsg.textContent = '抱歉，我现在有点累，稍后再试吧。';
     console.error(err);
+    aiMsg.textContent = "抱歉，我现在有点累，稍后再试吧。";
   } finally {
     isGenerating = false;
   }
 }
 
-// 回车发送
-document.getElementById('chat-input').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage(e.target.value);
-  }
-});
+if (chatInput) {
+  chatInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage(chatInput.value);
+    }
+  });
+}
+if (chatSendBtn) chatSendBtn.addEventListener("click", () => sendMessage(chatInput ? chatInput.value : ""));
 
-// 快捷问题按钮
-document.querySelectorAll('.chat-quick-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    sendMessage(btn.dataset.question);
+// 快捷问题：data-q 对应 translations 里的 q_<key>，按当前语言取文案
+document.querySelectorAll(".quick").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const q = btn.getAttribute("data-q");
+    const entry = translations["q_" + q];
+    const text = entry ? entry[currentLang] : btn.textContent;
+    sendMessage(text);
   });
 });
 
