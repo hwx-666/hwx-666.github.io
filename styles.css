@@ -508,6 +508,56 @@ a {
   opacity: var(--vine-opacity, 1);
 }
 
+/* ===== 项目卡片 ===== */
+.proj-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.proj-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 24px;
+  text-decoration: none;
+  color: var(--text);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.proj-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--lavender-deep);
+  box-shadow: 0 8px 16px rgba(143, 127, 174, 0.18);
+}
+
+.proj-name {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.proj-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-soft);
+  flex: 1;
+}
+
+.proj-link {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--lavender-deep);
+}
+
+@media (max-width: 640px) {
+  .proj-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* 个性签名：引用 */
 blockquote {
   font-size: 18px;
