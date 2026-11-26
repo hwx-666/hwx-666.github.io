@@ -227,28 +227,40 @@ async function sendMessage(text) {
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let fullText = "";
+    let buffer = "";
     aiMsg.textContent = "";
+
+    function consumeLine(line) {
+      if (!line.startsWith("data: ")) return;
+      const data = line.slice(6).trim();
+      if (data === "[DONE]") return;
+      try {
+        const json = JSON.parse(data);
+        const choice = json.choices && json.choices[0];
+        const delta = choice && choice.delta ? (choice.delta.content || "") : "";
+        if (delta) {
+          fullText += delta;
+          aiMsg.textContent = fullText;
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+      } catch (e) { /* 跳过无法解析的行 */ }
+    }
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      const chunk = decoder.decode(value, { stream: true });
-      chunk.split("\n").forEach((line) => {
-        if (!line.startsWith("data: ")) return;
-        const data = line.slice(6).trim();
-        if (data === "[DONE]") return;
-        try {
-          const json = JSON.parse(data);
-          const delta = json.choices && json.choices[0] && json.choices[0].delta
-            ? (json.choices[0].delta.content || "") : "";
-          if (delta) {
-            fullText += delta;
-            aiMsg.textContent = fullText;
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-          }
-        } catch (e) { /* 忽略不完整分片 */ }
-      });
+      // 累积到缓冲区，只处理完整的行，避免分片截断导致丢字
+      buffer += decoder.decode(value, { stream: true });
+      let idx;
+      while ((idx = buffer.indexOf("\n")) >= 0) {
+        const line = buffer.slice(0, idx).trim();
+        buffer = buffer.slice(idx + 1);
+        consumeLine(line);
+      }
     }
+    // 结束：冲掉解码器残留，处理最后一行
+    buffer += decoder.decode();
+    if (buffer.trim()) consumeLine(buffer.trim());
 
     if (!fullText) aiMsg.textContent = "（没有收到回复，请稍后再试）";
     chatHistory.push({ role: "assistant", content: fullText });
